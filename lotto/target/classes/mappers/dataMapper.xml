@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.myspring.lotto.dataMapper">
+	<resultMap type = "map" id = "LottoData">
+		<result column = "winningAmount" property="winningAmount"></result>
+		<result column = "drawDate" property="drawDate"></result>
+		<result column = "drawRound" property="drawRound"></result>
+		<result column = "winningNum1" property="winningNum1"></result>
+		<result column = "winningNum2" property="winningNum2"></result>
+		<result column = "winningNum3" property="winningNum3"></result>
+		<result column = "winningNum4" property="winningNum4"></result>
+		<result column = "winningNum5" property="winningNum5"></result>
+		<result column = "winningNum6" property="winningNum6"></result>
+		<result column = "winnerCount" property="winnerCount"></result>
+		<result column = "winnerPrice" property="winnerPrice"></result>
+		<result column = "bonusNum" property="bonusNum"></result>
+	</resultMap>
+
+	<resultMap type = "map" id = "StoreData">
+		<result column = "storeName" property="storeName"></result>
+		<result column = "storeAddress" property="storeAddress"></result>
+		<result column = "drawRound" property="drawRound"></result>
+	</resultMap>
+	
+	<resultMap type = "map" id = "RankData">
+		<result column = "winnerAmount" property="winnerAmount"></result>
+		<result column = "winnerCount" property="winnerCount"></result>
+		<result column = "winnerAmountPerGame" property="winnerAmountPerGame"></result>
+		<result column = "drawDate" property="drawDate"></result>
+		<result column = "drawRound" property="drawRound"></result>
+	</resultMap>
+	
+	<select id="showAllData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
+		select winnerCount, winnerPrice, winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum from lottos;
+	</select>
+	
+	<select id="showDateRoundData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
+		select winnerCount, winnerPrice,winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum from lottos where (drawDate like CONCAT(#{drawDate},'%') and drawRound = #{drawRound});
+	</select>
+	
+	<select id="showDateData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
+		select winnerCount, winnerPrice,winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum from lottos where drawDate like CONCAT(#{drawDate},'%');
+	</select>
+	
+	<select id="recentData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
+		select * from lottos order by drawRound desc limit 1;
+	</select>
+	
+	<select id="showRankData" parameterType="com.myspring.lotto.bean.RankVO" resultMap = "RankData">
+		select * from ranks;
+	</select>
+	
+	<select id="showStoreRankData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select storeName,ANY_VALUE(storeAddress) as storeAddress, count(*) as count from shops group by storeName having count(*)>4 order by count(*) desc;
+	</select>
+	
+	
+	<select id="showDateRankData" parameterType="com.myspring.lotto.bean.RankVO" resultMap = "RankData">
+		select * from ranks where drawDate like CONCAT(#{drawDate},'%');
+	</select>
+	
+	<select id="showRoundRankData" parameterType="com.myspring.lotto.bean.RankVO" resultMap = "RankData">
+		select * from ranks where drawRound = #{drawRound};
+	</select>
+	
+	<select id="showStoreData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select * from shops where storeAddress like CONCAT(#{storeAddress},'%');
+	</select>
+	<select id="showStorePageData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select L1.*from (select * from shops where storeAddress like CONCAT(#{storeAddress}, '%') order by drawRound DESC) L1 LIMIT 10 OFFSET #{drawRound}
+	</select>	
+	<select id="showStoreOnlyPageData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select L1.*from (select * from shops order by drawRound DESC) L1 LIMIT 10 OFFSET #{drawRound}
+	</select>
+	
+	<select id="showPageData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select L1.*from (select * from lottos order by drawRound DESC) L1 LIMIT 10 OFFSET #{drawRound}
+	</select>
+		
+	<select id="showRoundData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
+		select winnerCount, winnerPrice, winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum from lottos where drawRound = #{drawRound};
+	</select>
+	<insert id = "insertStoreData">
+		insert into shops(storeName, storeAddress, drawRound) values(#{storeName}, #{storeAddress}, #{drawRound});
+	</insert>
+	<insert id = "insertRankData">
+		insert into ranks(winnerAmount, winnerCount, winnerAmountPerGame, drawDate, drawRound) values (#{winnerAmount}, #{winnerCount}, #{winnerAmountPerGame}, #{drawDate}, #{drawRound});
+	</insert>
+	<insert id = "insertData">
+		insert into lottos(winnerPrice, winnerCount, winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum)
+		       values (#{winnerPrice}, #{winnerCount}, #{winningAmount}, #{drawDate}, #{drawRound}, #{winningNum1}, #{winningNum2}, #{winningNum3}, #{winningNum4}, #{winningNum5}, #{winningNum6}, #{bonusNum})
+	</insert>
+	
+	<update id = "updateWinningAmount" parameterType="com.myspring.lotto.bean.DataVO">
+		UPDATE lottos SET winningAmount = #{winningAmount} where drawRound = #{drawRound}
+	</update>
+</mapper>
