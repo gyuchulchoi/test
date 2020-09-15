@@ -81,7 +81,7 @@ public class HomeController {
 		catch(IOException e) {
 				throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
 		}
-		}
+	}
 	private static String get(String apiUrl, Map<String, String> requestHeaders) {
 			HttpURLConnection con = connect(apiUrl);
 			try {
@@ -377,9 +377,8 @@ public class HomeController {
 	 public String lotto(HttpServletRequest request) throws ParseException {
 			JSONArray dataArray = new JSONArray();
 			JSONObject jsonData = new JSONObject();
-			//String s = request.getParameter("drawRound");
-			//int i = Integer.parseInt(s);
-			for(int i=1; i<929; i++) {
+			String s = request.getParameter("drawRound");
+			int i = Integer.parseInt(s);
 			String apiURL = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=" + i;
 			Map<String, String> requestHeaders = new HashMap<>();
 			String responseBody = get(apiURL,requestHeaders);
@@ -415,7 +414,7 @@ public class HomeController {
 			dataVO.setWinnerCount(winnerCount);
 			dataVO.setWinnerPrice(winnerPrice);
 			dao.insertData(dataVO);
-			}
+			
 			return "";
 	}
 	
@@ -423,10 +422,10 @@ public class HomeController {
 	 @RequestMapping(value = "/shopsInsert", method = RequestMethod.GET, produces="text/plain;charset=UTF-8")
 	 public String lottoStore(HttpServletRequest request) throws IOException {
 			JSONArray dataArray = new JSONArray();
-			//String s = request.getParameter("drawRound");
-			//int i = Integer.parseInt(s);
+			String s = request.getParameter("drawRound");
+			int i = Integer.parseInt(s);
 			JSONObject jsonData = new JSONObject();
-			for(int i=0; i<814; i++) {	
+				
 			Document doc = Jsoup.connect("https://pyony.com/lotto/win-stores/?page="+i).get();
 			Elements ele = doc.select("body");
 			Elements ele2 = ele.select("div.container");
@@ -447,7 +446,7 @@ public class HomeController {
 					dao.insertStoreData(storeVO);
 					dataArray.add(jsonData);
 			}
-			}				
+						
 		return dataArray.toString();
 	 }
 	
@@ -459,9 +458,9 @@ public class HomeController {
 			RankVO rankVO = new RankVO();
 			JSONArray jsonArray = new JSONArray();
 			JSONObject jsonObject = new JSONObject();
-			//String z = request.getParameter("drawRound");
-			//int k = Integer.parseInt(z);
-			for(int k=1;k<929; k++) {
+			String z = request.getParameter("drawRound");
+			int k = Integer.parseInt(z);
+			
 			Document doc = Jsoup.connect("https://www.dhlottery.co.kr/gameResult.do?method=byWin&drwNo="+k).get();
 			Elements el = doc.select("div.win_result");
 			Elements strong = el.select("h4");
@@ -501,7 +500,7 @@ public class HomeController {
 				dao.insertRankData(rankVO);
 				jsonArray.add(jsonObject);
 			}
-			}
+			
 			if(jsonArray.size() == 1)
 				return jsonArray.get(0).toString();
 			return jsonArray.toString();

@@ -46,13 +46,8 @@ public class DataDAOImpl implements DataDAO {
 		return sqlSession.selectList(namespace+".showDateData", dataVO);
 	}
 	@Override
-
 	public List<Map<String,String>> showAllData(DataVO dataVO) throws Exception{
-
-		// TODO Auto-generated method stub
-
 		return sqlSession.selectList(namespace+".showAllData", dataVO);
-
 	}
 	@Override
 	public List<Map<String,String>> showPageData(DataVO dataVO) throws Exception{

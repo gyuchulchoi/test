@@ -32,7 +32,6 @@ public class DataServiceImpl implements DataService {
 	@Override
 	public List<Map<String,String>> showStoreRankData() throws Exception {
 		//storeVO = new StoreVO();
-		storeVO = new StoreVO();
 		return dao.showStoreRankData(storeVO);
 		
 	}

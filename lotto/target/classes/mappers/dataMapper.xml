@@ -35,7 +35,9 @@
 		<result column = "drawDate" property="drawDate"></result>
 		<result column = "drawRound" property="drawRound"></result>
 	</resultMap>
-	
+	<select id="showStoreRankData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
+		select storeName,ANY_VALUE(storeAddress) as storeAddress, count(*) as count from shops group by storeName having count(*)>4 order by count(*) desc;
+	</select>
 	<select id="showAllData" parameterType="com.myspring.lotto.bean.DataVO" resultMap = "LottoData">
 		select winnerCount, winnerPrice, winningAmount, drawDate, drawRound, winningNum1, winningNum2, winningNum3, winningNum4, winningNum5, winningNum6, bonusNum from lottos;
 	</select>
@@ -56,9 +58,6 @@
 		select * from ranks;
 	</select>
 	
-	<select id="showStoreRankData" parameterType="com.myspring.lotto.bean.StoreVO" resultMap = "StoreData">
-		select storeName,ANY_VALUE(storeAddress) as storeAddress, count(*) as count from shops group by storeName having count(*)>4 order by count(*) desc;
-	</select>
 	
 	
 	<select id="showDateRankData" parameterType="com.myspring.lotto.bean.RankVO" resultMap = "RankData">
